@@ -1,4 +1,4 @@
-# Volume Analyis using Flipside Data
+# Volume Analysis using Flipside Data
 
 ## Thesis
 
@@ -14,44 +14,44 @@ Examining tokens with the most volume from the previous hour can be important in
 
 This SQL query aggregates the top $ETH based tokens that had the largest inbound volume from the previous hour:
 
-`WITH last_hour AS (
+    `WITH last_hour AS (
+        SELECT
+            symbol,
+            SUM(amount) AS total_volume
+        FROM
+            ethereum.core.ez_token_transfers
+        WHERE
+            block_timestamp >= DATEADD(hour, -1, CURRENT_TIMESTAMP())
+        GROUP BY
+            symbol
+    )
     SELECT
         symbol,
-        SUM(amount) AS total_volume
+        total_volume
     FROM
-        ethereum.core.ez_token_transfers
-    WHERE
-        block_timestamp >= DATEADD(hour, -1, CURRENT_TIMESTAMP())
-    GROUP BY
-        symbol
-)
-SELECT
-    symbol,
-    total_volume
-FROM
-    last_hour
-ORDER BY
-    total_volume DESC
-LIMIT 10;`
+        last_hour
+    ORDER BY
+        total_volume DESC
+    LIMIT 10;`
 
 This SQL query aggregates the top $SOL based tokens that had the largest inbound volume from the previous hour:
 
-`WITH last_hour AS (
+    `WITH last_hour AS (
+        SELECT
+            swap_to_mint AS token_address,
+            SUM(swap_to_amount) AS total_volume
+        FROM
+            solana.defi.fact_swaps
+        WHERE
+            block_timestamp >= DATEADD(hour, -1, CURRENT_TIMESTAMP())
+        GROUP BY
+            swap_to_mint
+    )
     SELECT
-        swap_to_mint AS token_address,
-        SUM(swap_to_amount) AS total_volume
+        token_address,
+        total_volume
     FROM
-        solana.defi.fact_swaps
-    WHERE
-        block_timestamp >= DATEADD(hour, -1, CURRENT_TIMESTAMP())
-    GROUP BY
-        swap_to_mint
-)
-SELECT
-    token_address,
-    total_volume
-FROM
-    last_hour
-ORDER BY
-    total_volume DESC
-LIMIT 10;`
+        last_hour
+    ORDER BY
+        total_volume DESC
+    LIMIT 10;`
