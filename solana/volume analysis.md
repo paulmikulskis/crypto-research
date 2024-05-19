@@ -5,10 +5,10 @@
 
 Examining tokens with the most volume from the previous hour can be important in building crypto trading bots for several reasons:
 
--High volume often indicates high liquidity, making it easier to enter and exit trades without significant price impact.
--Increased trading volume can signal market interest and potential price movements, helping to identify opportunities for profit.
--Analyzing recent high-volume tokens helps the bot adapt to current market trends and focus on the most actively traded assets, increasing the chances of successful trades.
--Monitoring volume can help in identifying sudden spikes or drops, which might indicate upcoming volatility or market sentiment changes.
+- High volume often indicates high liquidity, making it easier to enter and exit trades without significant price impact.
+- Increased trading volume can signal market interest and potential price movements, helping to identify opportunities for profit.
+- Analyzing recent high-volume tokens helps the bot adapt to current market trends and focus on the most actively traded assets, increasing the chances of successful trades.
+- Monitoring volume can help in identifying sudden spikes or drops, which might indicate upcoming volatility or market sentiment changes.
 
 ## Largest Inbound Volume Tokens within the Previous Hour SQL Query
 
