@@ -37,47 +37,25 @@ This SQL query aggregates the top $ETH based tokens that had the largest volume 
 
 This SQL query aggregates the top $SOL based tokens that had the largest volume from the previous hour:
 
-    WITH last_hour_inbound AS (
+    WITH last_hour_volume AS (
     SELECT
-        swap_to_mint AS token_address,
-        SUM(swap_to_amount) AS total_inbound_volume
+        mint AS token_address,
+        SUM(amount) AS volume
     FROM
-        solana.defi.fact_swaps
+        solana.core.fact_transfers
     WHERE
         block_timestamp >= DATEADD(hour, -1, CURRENT_TIMESTAMP())
     GROUP BY
-        swap_to_mint
-    ),
-
-    last_hour_outbound AS (
-    SELECT
-        swap_from_mint AS token_address,
-        SUM(swap_from_amount) AS total_outbound_volume
-    FROM
-        solana.defi.fact_swaps
-    WHERE
-        block_timestamp >= DATEADD(hour, -1, CURRENT_TIMESTAMP())
-    GROUP BY
-        swap_from_mint
+        token_address
+    ORDER BY
+        volume DESC
     )
 
     SELECT
-        label_type,
-        label_subtype,
-        label,
-        address_name,
-        COALESCE(lhi.token_address, lho.token_address) AS token_address,
-        COALESCE(total_inbound_volume, 0) + COALESCE(total_outbound_volume, 0) AS total_volume
+        token_address
     FROM
-        last_hour_inbound AS lhi
-        FULL JOIN last_hour_outbound AS lho ON lhi.token_address = lho.token_address
-        FULL JOIN solana.core.dim_labels AS dl ON lhi.token_address = dl.address
-    WHERE
-        label_type = 'token' 
-    ORDER BY
-        total_volume DESC
-    LIMIT
-        20;
+        last_hour_volume
+    LIMIT 100
 
-It's important to note that solana.defi.fact_swaps has individual values for swapping into and out of a particular token. The query above uses two CTE tables for inbound and outbound volumes and adds both types of volume to get a total volume. Also, the fact_swaps table only consists of token_addresses, so I had to join the solana.core.dim_labels table to get the symbol name. Lastly, I filtered the top volume results by label_type = 'token' to ensure that only tokens are returned.
+
 
